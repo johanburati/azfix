@@ -10,6 +10,10 @@ import (
 )
 
 func main() {
+    IsAzure := util.IsAzure()
+    if !IsAzure {
+        log.Fatal("Error: This is not an Azure VM !")
+    }
     OSInfo := util.ReadOSRelease("/etc/os-release")
     app := &cli.App{
         Name:  "azfix",
@@ -25,6 +29,7 @@ func main() {
                     OSName := OSInfo["NAME"]
                     OSVersion := OSInfo["VERSION"]
                     fmt.Println("Distro:",OSName, OSVersion)
+                    if util.IsAzure() { fmt.Println("Azure") } else { fmt.Println("Not Azure") }
                     return nil
                 },
             },

@@ -1,6 +1,8 @@
 package util
 
 import (
+    "bytes"
+	"io/ioutil"
     "net"
     "log"
     "github.com/go-ini/ini"
@@ -27,6 +29,29 @@ func ReadOSRelease(configfile string) map[string]string {
     ConfigParams["UBUNTU_CODENAME"] = cfg.Section("").Key("UBUNTU_CODENAME").String()
     return ConfigParams
 }
+
+func IsAzure() bool {
+    if d, err := ioutil.ReadFile("/sys/class/dmi/id/chassis_asset_tag"); err == nil {
+        return bytes.Compare(d, []byte("7783-7084-3265-9085-8269-3286-77\n")) == 0
+    }
+    return false
+}
+
+/*
+func CheckTcpPort(host string, ports []string) {
+    for _, port := range ports {
+        timeout := time.Second
+        conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
+        if err != nil {
+            fmt.Println("Connecting error:", err)
+        }
+        if conn != nil {
+            defer conn.Close()
+            fmt.Println("Opened", net.JoinHostPort(host, port))
+        }
+    }
+}
+*/
 
 // CheckRepoUrl checks if the repo url is available
 // curl -k https://rhui-1.microsoft.com/pulp/repos/microsoft-azure-rhel8/repodata/repomd.xml
